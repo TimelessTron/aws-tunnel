@@ -1,0 +1,4 @@
+.idea
+.env
+.aws/aws_env.sh
+.aws/selected_service
