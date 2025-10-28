@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-
-cat <<EOF
-export AWS_ACCESS_KEY_ID="MOCK_ID"
-export AWS_SECRET_ACCESS_KEY="MOCK_SECRET"
-export AWS_SESSION_TOKEN="MOCK_TOKEN"
-EOF

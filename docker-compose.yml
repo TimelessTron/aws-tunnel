@@ -10,16 +10,6 @@ services:
     network_mode: "host"
     entrypoint: ["/app/scripts/entrypoint.sh"]
   
-  bats:
-    build: . 
-    volumes:
-      - .:/app
-    working_dir: /app
-    entrypoint: /bin/bash
-    command: ["-c", "bats test"]
-    stdin_open: true
-    tty: true
-
   console:
     build: .
     volumes:
@@ -28,3 +18,27 @@ services:
     entrypoint: /bin/bash
     stdin_open: true
     tty: true
+    network_mode: "host"
+    
+  print:
+    build: .
+    container_name: aws-tunnel
+    env_file: .env
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - ./:/app/
+    network_mode: "host"
+    entrypoint: ["/app/scripts/mysql/print.sh"]
+
+  connect:
+    build: .
+    container_name: aws-tunnel
+    env_file: .env
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - ./:/app/
+    network_mode: "host"
+    entrypoint: ["/app/scripts/mysql/connect.sh"]
+

@@ -1,7 +1,7 @@
 .DEFAULT_GOAL := help
 .SILENT:
 
-.PHONY: help run build clean test console
+.PHONY: help run build clean console print_mysql
 
 help:  ## Show this help message
 	echo "Available commands:"
@@ -14,11 +14,14 @@ run: ## To start an tunnel and a session
 build: ## Build the container
 	docker compose build --no-cache --pull
 
-clean:
+clean: ## Remove image and network
 	docker compose down --rmi local -v
 
-test: ## Run the tests
-	docker compose run --rm bats
-
-console c: ## Start a console
+console: ## Start a console
 	docker compose run --rm console
+
+print_mysql: ## Print out your mysql command
+	docker compose run --rm print
+
+connect: ## Connect to mysql DB
+	docker compose run --rm connect
