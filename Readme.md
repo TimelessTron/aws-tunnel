@@ -1,7 +1,3 @@
-# Deutsch (README_de.md)
-
-# =======================
-
 # Dev-CLI für AWS-Services
 
 ## 📖 Sinn und Zweck
