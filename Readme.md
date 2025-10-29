@@ -8,7 +8,6 @@ cd aws tunnel
 cp .env.template .env
 make build
 ```
-```
 
 
 Build a tunnel:
@@ -16,9 +15,6 @@ Build a tunnel:
 ```sh
 make run
 ```
-```
-```
-
 You can then choose from the services created.
 
 ```sh 
@@ -28,13 +24,11 @@ You can then choose from the services created.
 
 Selection (number):
 ```
-```
-
+```sh
 Log in with your Okta credentials.
 - Email address
 - Password
 - Tokens
-```
 ```
 
 If you have set the email and/or password in your .env, the input will be skipped. Otherwise you will get a prompt:
@@ -55,7 +49,6 @@ With `make print_mysql` the mysql statement including token can be generated.
 ```sh
 ❯ make print_mysql
     mysql -h 127.0.0.1 -P 33071 -u fly -D fly --enable-cleartext-plugin --password='db.proxy.region.rds.amazonaws.com:3306/?Action=connect&DBUser=username&X-Amz-Algorithm=ABCD-ABCD-ABCDABCD-ABC-Credential...Token=...
-```
 ```
 
 With this command you can connect to the database.
