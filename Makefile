@@ -20,7 +20,7 @@ clean: ## Remove image and network
 console: ## Start a console
 	docker compose run --rm console
 
-print_mysql: ## Print out your mysql command
+print: ## Print out your mysql command
 	docker compose run --rm print
 
 connect: ## Connect to mysql DB

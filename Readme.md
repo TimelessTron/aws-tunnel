@@ -1,57 +1,126 @@
-## Installation
+# Deutsch (README_de.md)
 
-Clone the project, create your .env file and build the container.
+# =======================
 
-```sh
-git clone...
-cd aws tunnel
-cp .env.template .env
+# Dev-CLI für AWS-Services
+
+## 📖 Sinn und Zweck
+
+Dieses Projekt ist ein **Developer CLI Tool**, das es Entwicklern erleichtert, auf unterschiedliche AWS-Services zuzugreifen, Datenbankverbindungen herzustellen und SSM-Sessions zu starten – alles über einen **einheitlichen Docker-Container**.
+Es bietet eine **komfortable Auswahl von Services**, automatisches Laden der Umgebungsvariablen, Authentifizierung via AWS und Okta, sowie direkte MySQL/MariaDB-Verbindungen über lokale Port-Weiterleitungen.
+
+## ⚙️ Installation
+
+1. Repository klonen:
+
+```bash
+git clone <REPO_URL>
+cd <REPO_NAME>
+```
+
+2. Docker & Docker Compose sicherstellen:
+
+```bash
+docker --version
+docker compose version
+```
+
+3. Container bauen:
+
+```bash
 make build
 ```
 
+## 📝 Konfiguration
 
-Build a tunnel:
+1. **Services definieren:**
+   Im Ordner `services/` werden die Services als `.env` Dateien abgelegt.
+   Beispielstruktur:
 
-```sh
+   ```
+   services/
+   ├─ Prod/
+   │  ├─ A.env
+   │  └─ B.env
+   └─ Stage/
+      ├─ A.env
+      └─ B.env
+   ```
+
+2. **Service-Umgebungsvariablen** in der `.env` Datei definieren:
+
+```bash
+NAME="Mein Service"
+REGION="eu-central-1"
+ROLE="arn:aws:iam::123456789:role/DeveloperAccess"
+SSM_DOCUMENT_NAME="AWS-StartPortForwardingSession"
+SSM_HOST="mydb.rds.amazonaws.com"
+SSM_HOST_PORT=3306
+SSM_CLIENT_PORT=33071
+DB_USER="devuser"
+DB_NAME="devdb"
+```
+
+3. **Sprache auswählen (optional):**
+   Sprachdateien befinden sich unter `scripts/lang/` (`en.sh`, `de.sh`, `es.sh`, `fr.sh`). Standard ist Deutsch. Diese könne in der .env angepasst werden.
+
+## 🚀 Benutzung
+
+Alle Aktionen laufen **innerhalb des Docker-Containers**. Folgende Commands stehen zur Verfügung:
+
+| Befehl         | Beschreibung                                 |
+| -------------- | -------------------------------------------- |
+| `make run`     | Tunnel und SSM-Session starten               |
+| `make build`   | Container bauen                              |
+| `make clean`   | Container, Images und Netzwerk entfernen     |
+| `make console` | Interaktive Konsole starten                  |
+| `make print`   | Den MySQL/MariaDB-Connect-Befehl anzeigen    |
+| `make connect` | Direkt zur MySQL/MariaDB-Datenbank verbinden |
+| `make help`    | Übersicht über alle Commands                 |
+
+**Beispiel:**
+
+1. Service auswählen:
+
+```bash
 make run
 ```
-You can then choose from the services created.
 
-```sh 
-1) Service A 
-2) Service B 
-3) Service C 
+* Wähle den gewünschten Service aus der Liste.
+* Automatische Authentifizierung und SSM-Session werden gestartet.
 
-Selection (number):
-```
-```sh
-Log in with your Okta credentials.
-- Email address
-- Password
-- Tokens
+2. MySQL-Verbindung:
+
+```bash
+make print
+# oder direkt verbinden:
+make connect
 ```
 
-If you have set the email and/or password in your .env, the input will be skipped. Otherwise you will get a prompt:
+## 🌟 Besonderheiten
 
+* **Automatische Service-Auswahl** aus `.env` Dateien in Unterordnern (`Prod`, `Stage`, …).
+* **Dynamisches Laden von Umgebungsvariablen** in `TARGET_FILE` und `AUTH_ENV_FILE`.
+* **SSM-Session über Jumphost** mit automatischer Portweiterleitung.
+* **AWS- und Okta-Authentifizierung** integriert.
+* **Mehrsprachige Ausgabe** mit Emojis (Deutsch, Englisch, Spanisch, Französisch).
+* **Fun-Feedback** bei Aktionen für ein lockeres Entwicklererlebnis.
+* **MySQL/MariaDB Auth-Token** werden automatisch generiert und optional in die Zwischenablage kopiert.
 
-```sh
-Password: *********
-Token: *****
-```
+## 👥 Zielgruppe
 
-The authentication is checked. If everything works, a tunnel is built and a connection is waited for
+Dieses Projekt richtet sich an:
 
-`Waiting for connections...`
+* Entwickler, die regelmäßig auf **verschiedene AWS-Umgebungen** zugreifen müssen
+* Teams, die **schnell und sicher MySQL-Datenbanken** erreichen wollen
+* DevOps, die **SSM-Sessions** automatisiert starten möchten
+* Alle, die ein **schickes CLI-Tool** mit Emojis, Mehrsprachigkeit und Fun-Feedback mögen
 
-The terminal window must remain open as long as the tunnel is to remain in existence.
-With `make print_mysql` the mysql statement including token can be generated.
+## 🔧 Hinweise
 
-```sh
-❯ make print_mysql
-    mysql -h 127.0.0.1 -P 33071 -u fly -D fly --enable-cleartext-plugin --password='db.proxy.region.rds.amazonaws.com:3306/?Action=connect&DBUser=username&X-Amz-Algorithm=ABCD-ABCD-ABCDABCD-ABC-Credential...Token=...
-```
+* Python ≥ 3.8 wird empfohlen (Boto3-Kompatibilität)
+* Docker und Docker Compose müssen installiert sein
+* `.env` Dateien sollten **nicht in Versionierungssysteme** eingecheckt werden (sensible Daten!)
+* SSM-Jumphost muss laufen und mit korrektem Tag `Name=jumphost` versehen sein
 
-With this command you can connect to the database.
-
-
-The binding lasts 15 minutes. If it has expired, you must have a new token generated. `make print_mysql`
+## ❤️ Viel Spaß beim Entwickeln!
