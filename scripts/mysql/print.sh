@@ -1,35 +1,63 @@
 #!/usr/bin/env bash
 set -o errexit -o nounset -o pipefail
 
-COPY_TOKEN_TO_CLIPBOARD=${COPY_TOKEN_TO_CLIPBOARD:-false}
+APP_DIR="${APP_DIR:-/app}"
+LANG="${LANG:-en}"
+source "${APP_DIR}/scripts/lang/${LANG:-en}.sh"
+# -----------------------------------------------------------------------------
+# Configuration
+# -----------------------------------------------------------------------------
+TARGET_FILE="${TARGET_FILE:-/app/.aws/selected_service}"
+AUTH_ENV_FILE="${AUTH_ENV_FILE:-/app/.aws/aws_env.sh}"
+DEFAULT_CLIENT_PORT=33088
 
-print_mysql_help() {
-  source /app/scripts/env/exportService.sh
-  auth_env_file=${AUTH_ENV_FILE:-/app/.aws/aws_env.sh}
-  source "$auth_env_file"
+# -----------------------------------------------------------------------------
+# Function: connect_mysql
+# Description:
+#   Generates AWS RDS auth token and optionally connects to MySQL.
+#   Also prints the full command and can copy token to clipboard.
+# -----------------------------------------------------------------------------
+connect_mysql() {
+    # Load selected service variables
+    [ -f "$TARGET_FILE" ] || { printf "$MSG_TARGET_FILE_NOT_FOUND\n" "$TARGET_FILE" >&2; exit 1; }
+    source "$TARGET_FILE"
 
-  if [ -z "${SERVICE_SSM_HOST:-}" ] || [ -z "${SERVICE_SSM_HOST_PORT:-}" ] || [ -z "${SERVICE_DB_USER:-}" ] || [ -z "${SERVICE_DB_NAME:-}" ]; then
-    echo "Required variables: HOST, REMOTE_PORT, DB_USER, DB_NAME" >&2
-    return 1
-  fi
+    [ -f "$AUTH_ENV_FILE" ] || touch "$AUTH_ENV_FILE"
+    source "$AUTH_ENV_FILE"
 
-  TOKEN="$(aws rds generate-db-auth-token --hostname "$SERVICE_SSM_HOST" --port "$SERVICE_SSM_HOST_PORT" --username "$SERVICE_DB_USER")"
-  cat <<EOF
-    mysql -h 127.0.0.1 -P ${SERVICE_SSM_CLIENT_PORT:-33088} -u $SERVICE_DB_USER -D $SERVICE_DB_NAME --enable-cleartext-plugin --password='$TOKEN'
+    # Required variables check
+    REQUIRED_VARS=(HOST HOST_PORT CLIENT_PORT DB_USER DB_NAME)
+    for var in "${REQUIRED_VARS[@]}"; do
+        if [[ -z "${!var:-}" ]]; then
+            echo "$MSG_MISSING_REQ_VAR $var" >&2
+            exit 1
+        fi
+    done
 
-EOF
+    # Generate AWS RDS auth token
+    local token
+    token="$(aws rds generate-db-auth-token \
+        --region "$REGION" \
+        --hostname "$HOST" \
+        --port "$HOST_PORT" \
+        --username "$DB_USER")"
 
-  if [ "$COPY_TOKEN_TO_CLIPBOARD" = true ]; then
-    if command -v pbcopy >/dev/null 2>&1; then
-      printf "%s" "$TOKEN" | pbcopy
-      echo "Token copied to clipboard."
-    elif command -v xclip >/dev/null 2>&1; then
-      printf "%s" "$TOKEN" | xclip -selection clipboard
-      echo "Token copied to clipboard."
-    else
-      echo "No clipboard utility found."
-    fi
-  fi
+    # Print MySQL command
+    local mysql_cmd="mysql -h 127.0.0.1 -P ${CLIENT_PORT:-$DEFAULT_CLIENT_PORT} -u $DB_USER -D $DB_NAME --enable-cleartext-plugin --password='$token'"
+    echo ""
+    echo "-------------------------------------------------"
+    echo "$MSG_SERVICE: ${NAME:-<unknown>}"
+    echo "$MSG_DB: ${DB_NAME:-<unknown>}"
+    echo "$MSG_COMMAND:"
+    echo ""
+    echo "$mysql_cmd"
+    echo ""
+    echo "$MSG_TOKEN_VALIDITY"
+    echo "-------------------------------------------------"
+    echo ""
 }
 
-print_mysql_help
+# -----------------------------------------------------------------------------
+# Execute
+# -----------------------------------------------------------------------------
+connect_mysql
