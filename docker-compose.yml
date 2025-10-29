@@ -41,4 +41,3 @@ services:
       - ./:/app/
     network_mode: "host"
     entrypoint: ["/app/scripts/mysql/connect.sh"]
-
