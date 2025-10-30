@@ -10,11 +10,12 @@ Es bietet eine **komfortable Auswahl von Services**, automatisches Laden der Umg
 1. Repository klonen:
 
 ```bash
-git clone <REPO_URL>
-cd <REPO_NAME>
+git clone https://github.com/TimelessTron/aws-tunnel.git
+cd aws-tunnel
+cp .env.template .env
 ```
 
-2. Docker & Docker Compose sicherstellen:
+2. Installation von Docker & Docker Compose sicherstellen:
 
 ```bash
 docker --version
@@ -33,19 +34,26 @@ make build
    Im Ordner `services/` werden die Services als `.env` Dateien abgelegt.
    Beispielstruktur:
 
-   ```
-   services/
-   ├─ Prod/
-   │  ├─ A.env
-   │  └─ B.env
-   └─ Stage/
-      ├─ A.env
-      └─ B.env
-   ```
+```text
+services/
+├─ Frontend/
+│  ├─ Stage
+│  │  ├─ DB-A.env
+│  │  └─ DB-B.env
+│  └─ Prod
+│     ├─ DB-A.env
+│     └─ DB-B.env
+└─ Backend/
+  ├─ Stage
+  │  ├─ DB-A.env
+  │  └─ DB-B.env
+  └─ Prod
+     ├─ DB-A.env
+     └─ DB-B.env
+``` 
+2. **Service-Umgebungsvariablen** in der `services/*.env` Datei definieren:
 
-2. **Service-Umgebungsvariablen** in der `.env` Datei definieren:
-
-```bash
+```dotenv
 NAME="Mein Service"
 REGION="eu-central-1"
 ROLE="arn:aws:iam::123456789:role/DeveloperAccess"
@@ -57,22 +65,19 @@ DB_USER="devuser"
 DB_NAME="devdb"
 ```
 
-3. **Sprache auswählen (optional):**
-   Sprachdateien befinden sich unter `scripts/lang/` (`en.sh`, `de.sh`, `es.sh`, `fr.sh`). Standard ist Deutsch. Diese könne in der .env angepasst werden.
-
 ## 🚀 Benutzung
 
 Alle Aktionen laufen **innerhalb des Docker-Containers**. Folgende Commands stehen zur Verfügung:
 
-| Befehl         | Beschreibung                                 |
-| -------------- | -------------------------------------------- |
-| `make run`     | Tunnel und SSM-Session starten               |
-| `make build`   | Container bauen                              |
-| `make clean`   | Container, Images und Netzwerk entfernen     |
-| `make console` | Interaktive Konsole starten                  |
-| `make print`   | Den MySQL/MariaDB-Connect-Befehl anzeigen    |
-| `make connect` | Direkt zur MySQL/MariaDB-Datenbank verbinden |
-| `make help`    | Übersicht über alle Commands                 |
+| Befehl         | Beschreibung                             |
+| -------------- |------------------------------------------|
+| `make run`     | Tunnel und SSM-Session starten           |
+| `make build`   | Container bauen                          |
+| `make clean`   | Container, Images und Netzwerk entfernen |
+| `make console` | Interaktive Konsole starten              |
+| `make print`   | Den MySQL-Connect-Befehl anzeigen        |
+| `make connect` | Direkt zur MySQL-Datenbank verbinden     |
+| `make help`    | Übersicht über alle Commands             |
 
 **Beispiel:**
 
@@ -86,7 +91,7 @@ make run
 * Automatische Authentifizierung und SSM-Session werden gestartet.
 
 2. MySQL-Verbindung:
-
+Öffne ein neues Terminal. (Alte Terminal muss offen bleiben)
 ```bash
 make print
 # oder direkt verbinden:
@@ -99,7 +104,7 @@ make connect
 * **Dynamisches Laden von Umgebungsvariablen** in `TARGET_FILE` und `AUTH_ENV_FILE`.
 * **SSM-Session über Jumphost** mit automatischer Portweiterleitung.
 * **AWS- und Okta-Authentifizierung** integriert.
-* **Mehrsprachige Ausgabe** mit Emojis (Deutsch, Englisch, Spanisch, Französisch).
+* **Mehrsprachige Ausgabe** (Deutsch, Englisch, Spanisch, Französisch).
 * **Fun-Feedback** bei Aktionen für ein lockeres Entwicklererlebnis.
 * **MySQL/MariaDB Auth-Token** werden automatisch generiert und optional in die Zwischenablage kopiert.
 
@@ -111,12 +116,3 @@ Dieses Projekt richtet sich an:
 * Teams, die **schnell und sicher MySQL-Datenbanken** erreichen wollen
 * DevOps, die **SSM-Sessions** automatisiert starten möchten
 * Alle, die ein **schickes CLI-Tool** mit Emojis, Mehrsprachigkeit und Fun-Feedback mögen
-
-## 🔧 Hinweise
-
-* Python ≥ 3.8 wird empfohlen (Boto3-Kompatibilität)
-* Docker und Docker Compose müssen installiert sein
-* `.env` Dateien sollten **nicht in Versionierungssysteme** eingecheckt werden (sensible Daten!)
-* SSM-Jumphost muss laufen und mit korrektem Tag `Name=jumphost` versehen sein
-
-## ❤️ Viel Spaß beim Entwickeln!
