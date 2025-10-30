@@ -1,21 +1,22 @@
-FROM amazonlinux:2
+FROM ubuntu:22.04
 
-# Systemupdates + wichtige Tools + MySQL Repo + SSM Plugin
-RUN yum update -y && \
-    yum install -y \
-        curl \
-        tar \
-        vim \
-        python3 \
-        python3-pip \
-        groff \
-        jq \
-        grep \
-        coreutils \
-        unzip \
-        https://dev.mysql.com/get/mysql80-community-release-el7-11.noarch.rpm \
-        https://s3.amazonaws.com/session-manager-downloads/plugin/latest/linux_64bit/session-manager-plugin.rpm && \
-    yum clean all
+# Grundpakete installieren
+RUN apt-get update && apt-get install -y \
+    curl \
+    tar \
+    vim \
+    python3 \
+    python3-pip \
+    groff \
+    jq \
+    grep \
+    coreutils \
+    unzip \
+    lsb-release \
+    gnupg \
+    software-properties-common \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
 # AWS CLI v2 installieren
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
@@ -26,9 +27,13 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2
 RUN pip3 install --upgrade pip && \
     pip3 install aws-okta-processor
 
-# MySQL Server installieren
-RUN yum install -y mysql-community-server && \
-    yum clean all
+# MySQL Server direkt aus Ubuntu Repo installieren
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# AWS Session Manager Plugin
+RUN curl "https://s3.amazonaws.com/session-manager-downloads/plugin/latest/ubuntu_64bit/session-manager-plugin.deb" -o "session-manager-plugin.deb" && \
+    dpkg -i session-manager-plugin.deb && rm session-manager-plugin.deb
 
 WORKDIR /app
 
