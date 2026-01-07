@@ -30,9 +30,9 @@ start_session() {
     : "${AWS_ACCESS_KEY_ID:?Missing AWS credentials}"
 
     # Logging helpers
-    log_info()  { echo -e "${COLOR:-}\u2728 $1${NC:-}"; }
-    log_success() { echo -e "${SUCCESS_COLOR:-}\u2714 $1${NC:-}"; }
-    log_error() { echo -e "${ERROR_COLOR:-}\u274C $1${NC:-}" >&2; }
+    log_info()  { echo -e "${COLOR:-}$1${NC:-}"; }
+    log_success() { echo -e "${SUCCESS_COLOR:-}$1${NC:-}"; }
+    log_error() { echo -e "${ERROR_COLOR:-}$1${NC:-}" >&2; }
 
     log_info "Starting SSM session to host $HOST in region $REGION (local port $CLIENT_PORT)"
 
@@ -48,7 +48,7 @@ start_session() {
             --output text | head -n1) || true
 
         if [[ -z "$jumphost_id" ]]; then
-            log_error "No running EC2 jumphost found in region $REGION"
+            log_error "${MSG_NO_SERVICE_JUMBHOST} $REGION"
             return 1
         fi
 
@@ -61,7 +61,7 @@ start_session() {
     start_session_cmd() {
         local jumphost_id="$1"
 
-        log_info "Starting SSM session via jumphost $jumphost_id..."
+        log_info "${MSG_STARTING_JUMBHOST} $jumphost_id..."
 
         aws ssm start-session \
             --region="$REGION" \
@@ -87,19 +87,17 @@ start_session() {
     # Attempt connection
     # -------------------------------------------------------------------------
     if ! try_start; then
-        log_info "Refreshing AWS credentials..."
+        log_info "${MSG_REFRESH_AWS_CREDENTIALS}"
         unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
         : >"$AUTH_ENV_FILE"
         authenticate_service
         source "$AUTH_ENV_FILE"
 
         if ! try_start; then
-            log_error "Connection failed after authentication refresh"
+            log_error "${MSG_CONNECTION_FAILED_AFTER_REFRESH}"
             exit 1
         fi
     fi
-
-    log_success "SSM session started successfully"
 }
 
 # -----------------------------------------------------------------------------

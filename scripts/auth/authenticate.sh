@@ -33,7 +33,7 @@ authenticate_service() {
             echo -e "${SUCCESS_COLOR:-}${MSG_CREDENTIAL_ALREADY_SET} $NAME${NC:-}"
             return
         else
-            echo -e "${INFO_COLOR:-}Detected change in REGION or ROLE — re-authenticating...${NC:-}"
+            echo -e "${INFO_COLOR:-}${MSG_NEW_REGION_RECONNECT}${NC:-}"
             unset AWS_ACCESS_KEY_ID AWS_SECRET_ACCESS_KEY AWS_SESSION_TOKEN
             : >"$AUTH_ENV_FILE"
         fi

@@ -13,26 +13,30 @@ export MSG_SERVICE_SELECTED="✅ Dienst erfolgreich ausgewählt:"
 # -----------------------------------------------------------------------------
 export MSG_ERROR_ENV_NOT_SET="⚠️ Hoppla! Diese Umgebungsvariable fehlt noch."
 export MSG_ERROR_AWS_NOT_SET="⚠️ AWS-Variable vermisst! Ohne geht's nicht."
-export MSG_TARGET_FILE_NOT_FOUND="📂 Ziel-Datei '%s'? Die hat sich wohl versteckt."
-export MSG_MISSING_REQ_VAR="⚠️ Oh nein! Die Variable '%s' fehlt noch."
-export MSG_MISSING_VAR="⚠️ Fehlende Variable '%s' – wir brauchen sie!"
+export MSG_TARGET_FILE_NOT_FOUND="📂 Ziel-Datei? Die hat sich wohl versteckt."
+export MSG_MISSING_REQ_VAR="⚠️ Oh nein! Die Variable fehlt noch. "
+export MSG_MISSING_VAR="⚠️ Fehlende Variable – wir brauchen sie!"
 
 # -----------------------------------------------------------------------------
 # Authentifizierung / AWS
 # -----------------------------------------------------------------------------
-export MSG_AUTHENTICATION_FAILED="❌ Authentifizierung für '%s' fehlgeschlagen. Nervt, ich weiß."
-export MSG_CREDENTIAL_ALREADY_SET="🔑 AWS-Zugangsdaten für '%s' sind schon da. Top!"
-export MSG_AUTHENTICATION_SUCCESSFULLY="✅ Erfolgreich eingeloggt für '%s'. Super!"
+export MSG_NEW_REGION_RECONNECT="Änderung in REGION oder ROLE erkannt – erneute Authentifizierung..."
+export MSG_NO_SERVICE_JUMBHOST="In der Region wurde kein laufender EC2-Jumphost gefunden."
+export MSG_AUTHENTICATION_FAILED="❌ Authentifizierung fehlgeschlagen. Nervt, ich weiß."
+export MSG_CREDENTIAL_ALREADY_SET="🔑 AWS-Zugangsdaten sind schon da. Top!"
+export MSG_AUTHENTICATION_SUCCESSFULLY="✅ Erfolgreich eingeloggt. Super!"
 export MSG_AUTH_SUCCESS="🎉 Authentifizierung geklappt. Party!"
+export MSG_REFRESH_AWS_CREDENTIALS="Aktualisierung der AWS-Anmeldedaten..."
+export MSG_CONNECTION_FAILED_AFTER_REFRESH="Verbindung nach Aktualisierung der Authentifizierung fehlgeschlagen"
 
 # -----------------------------------------------------------------------------
 # Session / Verbindung
 # -----------------------------------------------------------------------------
+export MSG_STARTING_JUMBHOST="SSM-Sitzung über Jumphost starten"
 export MSG_SESSION_STARTED="🚀 SSM-Sitzung gestartet. Alles klar zum Abheben!"
-export MSG_CONFIRM_CONNECT="🔗 Willst du wirklich verbinden? [J/n] (Trau dich!) "
 export MSG_TOKEN_VALIDITY="⏱ Token ist 15 Minuten gültig – also beeilen!"
 export MSG_ABORTED="🛑 Abgebrochen. Kein Stress."
-export MSG_DISCONNECTED="⚡ Verbindung zu %s getrennt. Tschüssikowski!"
+export MSG_DISCONNECTED="⚡ Verbindung  getrennt. Tschüssikowski sagt "
 
 # -----------------------------------------------------------------------------
 # Service / DB Info
@@ -40,5 +44,4 @@ export MSG_DISCONNECTED="⚡ Verbindung zu %s getrennt. Tschüssikowski!"
 export MSG_SERVICE="🛠  Service"
 export MSG_DB="🗄  DB-Name"
 export MSG_USER="👤 Benutzer"
-export MSG_CONNECT="🔌 Verbinden? [J/n] Los geht's!"
 export MSG_COMMAND="💻 Befehl"

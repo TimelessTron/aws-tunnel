@@ -9,6 +9,10 @@ services:
       - ./:/app/
     network_mode: "host"
     entrypoint: ["/app/scripts/entrypoint.sh"]
+    deploy:
+      resources:
+        limits:
+          memory: 128M
   
   console:
     build: .
@@ -19,6 +23,10 @@ services:
     stdin_open: true
     tty: true
     network_mode: "host"
+    deploy:
+      resources:
+        limits:
+          memory: 128M
     
   print:
     build: .
@@ -30,6 +38,10 @@ services:
       - ./:/app/
     network_mode: "host"
     entrypoint: ["/app/scripts/mysql/print.sh"]
+    deploy:
+      resources:
+        limits:
+          memory: 128M
 
   connect:
     build: .
@@ -41,3 +53,7 @@ services:
       - ./:/app/
     network_mode: "host"
     entrypoint: ["/app/scripts/mysql/connect.sh"]
+    deploy:
+      resources:
+        limits:
+          memory: 128M
