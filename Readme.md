@@ -1,13 +1,11 @@
-# Dev-CLI für AWS-Services
+# Dev-CLI for AWS Services
 
-## 📖 Sinn und Zweck
-
-Dieses Projekt ist ein **Developer CLI Tool**, das es Entwicklern erleichtert, auf unterschiedliche AWS-Services zuzugreifen, Datenbankverbindungen herzustellen und SSM-Sessions zu starten – alles über einen **einheitlichen Docker-Container**.
-Es bietet eine **komfortable Auswahl von Services**, automatisches Laden der Umgebungsvariablen, Authentifizierung via AWS und Okta, sowie direkte MySQL/MariaDB-Verbindungen über lokale Port-Weiterleitungen.
+## 📖 Purpose
+This project is a **Developer CLI Tool** that makes it easier for developers to access various AWS services, establish database connections, and start SSM sessions—all through a **unified Docker container**.
+It offers a **convenient service selection**, automatic loading of environment variables, authentication via AWS and Okta, and direct MySQL/MariaDB connections through local port forwarding.
 
 ## ⚙️ Installation
-
-1. Repository klonen:
+1. Clone the repository:
 
 ```bash
 git clone https://github.com/TimelessTron/aws-tunnel.git
@@ -15,46 +13,42 @@ cd aws-tunnel
 cp .env.template .env
 ```
 
-2. Installation von Docker & Docker Compose sicherstellen:
+2. Ensure Docker & Docker Compose are installed:
 
 ```bash
 docker --version
 docker compose version
 ```
 
-3. Container bauen:
-
+3. Build the container:
 ```bash
 make build
 ```
 
-## 📝 Konfiguration
-
-1. **Services definieren:**
-   Im Ordner `services/` werden die Services als `.env` Dateien abgelegt.
-   Beispielstruktur:
-
+## 📝 Configuration
+1. **Define services:**
+   Service configurations are stored as `.env` files in the `services/` directory.
+   Example structure:
 ```text
-services/
-├─ Frontend/
+services
+├─ Frontend
 │  ├─ Stage
 │  │  ├─ DB-A.env
 │  │  └─ DB-B.env
 │  └─ Prod
 │     ├─ DB-A.env
 │     └─ DB-B.env
-└─ Backend/
+└─ Backend
   ├─ Stage
   │  ├─ DB-A.env
   │  └─ DB-B.env
   └─ Prod
      ├─ DB-A.env
      └─ DB-B.env
-``` 
-2. **Service-Umgebungsvariablen** in der `services/*.env` Datei definieren:
-
+```
+2. **Set service environment variables** in the `services/*.env` file:
 ```dotenv
-NAME="Mein Service"
+NAME="My Service"
 REGION="eu-central-1"
 ROLE="arn:aws:iam::123456789:role/DeveloperAccess"
 SSM_DOCUMENT_NAME="AWS-StartPortForwardingSession"
@@ -65,54 +59,45 @@ DB_USER="devuser"
 DB_NAME="devdb"
 ```
 
-## 🚀 Benutzung
+## 🚀 Usage
+All actions run **inside the Docker container**. The following commands are available: \
 
-Alle Aktionen laufen **innerhalb des Docker-Containers**. Folgende Commands stehen zur Verfügung:
+| Command                   | Description                              |
+|---------------------------| ---------------------------------------- |
+| `make run`     | Start tunnel and SSM session             |
+| `make build`   | Build container                          |
+| `make clean`   | Remove container, images, and network    |
+| `make console` | Start interactive console                |
+| `make print`   | Display the MySQL connect command        |
+| `make connect` | Connect directly to the MySQL database   |
+| `make help`    | Overview of all commands                 |
 
-| Befehl         | Beschreibung                             |
-| -------------- |------------------------------------------|
-| `make run`     | Tunnel und SSM-Session starten           |
-| `make build`   | Container bauen                          |
-| `make clean`   | Container, Images und Netzwerk entfernen |
-| `make console` | Interaktive Konsole starten              |
-| `make print`   | Den MySQL-Connect-Befehl anzeigen        |
-| `make connect` | Direkt zur MySQL-Datenbank verbinden     |
-| `make help`    | Übersicht über alle Commands             |
+**Example:**
+1. Select a service: \
+   `make run`
+* Choose the desired service from the list.
+* Automatic authentication and SSM session will start.
 
-**Beispiel:**
+2. MySQL connection: \
+   Open a new terminal. (The old terminal must remain open.) \
+   `make print` or \
+   `make connect`
+---
 
-1. Service auswählen:
+## 🌟 Features
+* **Automatic service selection** from `.env` files in subdirectories (`Prod`, `Stage`, etc.).
+* **Dynamic loading of environment variables** into `TARGET_FILE` and `AUTH_ENV_FILE`.
+* **SSM session via jumphost** with automatic port forwarding.
+* **AWS and Okta authentication** integrated.
+* **Multilingual output** (German, English, Spanish, French).
+* **Fun feedback** for actions, creating a relaxed developer experience.
+* **MySQL/MariaDB auth tokens** are automatically generated and optionally copied to the clipboard.
 
-```bash
-make run
-```
+## 👥 Target Audience
+This project is aimed at:
+* Developers who need to regularly access **different AWS environments**
+* Teams who want to **quickly and securely reach MySQL databases**
+* DevOps who want to **automate SSM sessions**
+* Anyone who enjoys a **sleek CLI tool** with emojis, multilingual support, and fun feedback
 
-* Wähle den gewünschten Service aus der Liste.
-* Automatische Authentifizierung und SSM-Session werden gestartet.
-
-2. MySQL-Verbindung:
-Öffne ein neues Terminal. (Alte Terminal muss offen bleiben)
-```bash
-make print
-# oder direkt verbinden:
-make connect
-```
-
-## 🌟 Besonderheiten
-
-* **Automatische Service-Auswahl** aus `.env` Dateien in Unterordnern (`Prod`, `Stage`, …).
-* **Dynamisches Laden von Umgebungsvariablen** in `TARGET_FILE` und `AUTH_ENV_FILE`.
-* **SSM-Session über Jumphost** mit automatischer Portweiterleitung.
-* **AWS- und Okta-Authentifizierung** integriert.
-* **Mehrsprachige Ausgabe** (Deutsch, Englisch, Spanisch, Französisch).
-* **Fun-Feedback** bei Aktionen für ein lockeres Entwicklererlebnis.
-* **MySQL/MariaDB Auth-Token** werden automatisch generiert und optional in die Zwischenablage kopiert.
-
-## 👥 Zielgruppe
-
-Dieses Projekt richtet sich an:
-
-* Entwickler, die regelmäßig auf **verschiedene AWS-Umgebungen** zugreifen müssen
-* Teams, die **schnell und sicher MySQL-Datenbanken** erreichen wollen
-* DevOps, die **SSM-Sessions** automatisiert starten möchten
-* Alle, die ein **schickes CLI-Tool** mit Emojis, Mehrsprachigkeit und Fun-Feedback mögen
+---

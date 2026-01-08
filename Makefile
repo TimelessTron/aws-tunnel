@@ -20,6 +20,10 @@ help: ## List all available commands
 	@printf "Check the README.md for more information about the project.\n"
 	@grep -hE '(^[a-zA-Z0-9 \./_-]+:.*?##.*$$)|(^##)|(^###)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; /^## / {printf "\n$(GRAY)%s$(NC)\t\n", substr($$0, 4); }; /^### / {printf "  $(YELLOW)%s$(NC)\t\n", substr($$0, 5)}; /^[a-zA-Z0-9\-\. ]+:.*?##/ { command = $$1; split(command, parts, " "); if (length(parts) > 1) { cmd = parts[1]; for (i = 2; i <= length(parts); i++) { cmd = cmd " ${CYAN}(" parts[i] ")${NC}"; } printf "  ${GREEN}%-25s${NC}\t%s\n", cmd, $$2; } else { printf "  ${GREEN}%-20s${NC}\t%s\n", $$1, $$2; } }'
 
+info: ## print short info about usage
+	echo -e "\n${CYAN}"
+	@sed -n '/\*\*Example\:\*\*/,/---/p' Readme.md
+	echo -e "$(NC)"
 
 ## Container
 build: ## (Re)Build the container

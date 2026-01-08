@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-# Grundpakete installieren
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     curl \
     tar \
@@ -18,16 +18,16 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# AWS CLI v2 installieren
+# AWS CLI v2
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip && ./aws/install && \
     rm -rf awscliv2.zip aws
 
-# Python-Pakete installieren
+# Python-Pakete
 RUN pip3 install --upgrade pip && \
     pip3 install aws-okta-processor
 
-# MySQL Server direkt aus Ubuntu Repo installieren
+# MySQL Server
 RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y mysql-server && \
     apt-get clean && rm -rf /var/lib/apt/lists/*
 
